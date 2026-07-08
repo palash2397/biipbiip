@@ -42,7 +42,7 @@ export class AuthService {
           isProfileCompleted: false,
         });
 
-        return new ApiResponse(200, user, Msg.OTP_SENT);
+        return new ApiResponse(200, {}, Msg.OTP_SENT);
       }
 
       // Existing user
@@ -135,7 +135,7 @@ export class AuthService {
       const otp = '9999';
       const otpExpireAt = getExpirationTime();
 
-      const user = await this.userModel.findOneAndUpdate(
+      await this.userModel.findOneAndUpdate(
         {
           phoneNumber: dto.phoneNumber,
         },
@@ -148,7 +148,7 @@ export class AuthService {
         },
       );
 
-      return new ApiResponse(200, user, Msg.OTP_RESENT);
+      return new ApiResponse(200, {}, Msg.OTP_RESENT);
     } catch (error) {
       console.log('error while resending otp', error);
 
