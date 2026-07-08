@@ -10,9 +10,7 @@ import {
 } from 'src/helpers/index';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
-
 import { Msg } from 'src/helpers/responseMsg';
-
 import { User, UserDocument } from './schema/user.schema';
 
 @Injectable()
