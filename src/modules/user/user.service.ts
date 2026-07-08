@@ -26,7 +26,8 @@ export class UserService {
     try {
       const user = await this.userModel
         .findById(userId)
-        .select('-otp -otpExpireAt');
+        .select('-otp -otpExpireAt')
+        .lean();
 
       if (!user) {
         return new ApiResponse(400, {}, Msg.USER_NOT_FOUND);
