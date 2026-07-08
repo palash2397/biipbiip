@@ -11,18 +11,21 @@ export class User {
   @Prop({
     type: String,
     trim: true,
+    default: null,
   })
   firstName?: string;
 
   @Prop({
     type: String,
     trim: true,
+    default: null,
   })
   lastName?: string;
 
   @Prop({
     type: String,
     trim: true,
+    default: null,
   })
   countryCode: string;
 
@@ -39,6 +42,7 @@ export class User {
     type: String,
     trim: true,
     lowercase: true,
+    default: null,
   })
   email?: string;
 
@@ -48,6 +52,24 @@ export class User {
     default: [],
   })
   roles: UserRole[];
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  avatar?: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  gender?: string;
+
+  @Prop({
+    type: Date,
+    default: null,
+  })
+  DOB?: Date;
 
   @Prop({
     type: Boolean,

@@ -99,7 +99,11 @@ export class AuthService {
       await user.save();
 
       const token = jwt.sign(
-        { id: user._id.toString(), roles: user.roles },
+        {
+          id: user._id.toString(),
+          roles: user.roles,
+          phoneNumber: user.phoneNumber,
+        },
         process.env.JWT_SECRET!,
         {
           expiresIn: '10d',
