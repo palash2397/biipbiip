@@ -3,7 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { ApiResponse } from 'src/helpers/ApiResponse';
-import { generateOtp, getExpirationTime } from 'src/helpers/index';
+import {
+  generateOtp,
+  getExpirationTime,
+  deleteOldFile,
+} from 'src/helpers/index';
+
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 import { Msg } from 'src/helpers/responseMsg';
 
@@ -30,6 +36,45 @@ export class UserService {
     } catch (error) {
       console.log('error while getting my profile', error);
 
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+    file?: Express.Multer.File,
+  ) {
+    try {
+      const user = await this.userModel.findOne({ _id: userId });
+      if (!user) {
+        return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
+      }
+
+      const updatedUser = await this.userModel.findOneAndUpdate(
+        { _id: user._id },
+        { ...dto, user: user._id },
+        { new: true, upsert: true },
+      );
+
+      if (!updatedUser) {
+        return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
+      }
+
+      console.log(`updated user ----------->`, updatedUser);
+
+      if (file) {
+        if (user.avatar) {
+          deleteOldFile('user', user.avatar);
+        }
+
+        updatedUser.avatar = file.filename;
+        await updatedUser.save();
+      }
+
+      return new ApiResponse(200, user, Msg.USER_UPDATED);
+    } catch (error) {
+      console.log('error while updating profile', error);
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }
