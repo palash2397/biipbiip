@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken';
 import { User, UserDocument } from 'src/modules/user/schema/user.schema';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -115,6 +116,41 @@ export class AuthService {
       );
     } catch (error) {
       console.log('error while verifying otp', error);
+
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async resendOtp(dto: ResendOtpDto) {
+    try {
+      const userExists = await this.userModel.findOne({
+        phoneNumber: dto.phoneNumber,
+        countryCode: dto.countryCode,
+      });
+
+      if (!userExists) {
+        return new ApiResponse(400, {}, Msg.USER_NOT_FOUND);
+      }
+
+      const otp = '9999';
+      const otpExpireAt = getExpirationTime();
+
+      const user = await this.userModel.findOneAndUpdate(
+        {
+          phoneNumber: dto.phoneNumber,
+        },
+        {
+          otp,
+          otpExpireAt,
+        },
+        {
+          new: true,
+        },
+      );
+
+      return new ApiResponse(200, user, Msg.OTP_RESENT);
+    } catch (error) {
+      console.log('error while resending otp', error);
 
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
