@@ -42,4 +42,71 @@ export class AddressService {
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }
+
+  async myAddress(userId: any) {
+    try {
+      const addresses = await this.addressModel
+        .find({ user: userId })
+        .sort({ createdAt: -1 });
+
+      if (!addresses || addresses.length === 0) {
+        return new ApiResponse(404, {}, Msg.ADDRESS_NOT_FOUND);
+      }
+
+      return new ApiResponse(200, addresses, Msg.ADDRESS_FETCHED);
+    } catch (error) {
+      console.log(`error while fetching the addresses`, error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async updateAddress(
+    userId: string,
+    addressId: string,
+    dto: UpdateAddressDto,
+  ) {
+    try {
+      const address = await this.addressModel.findOneAndUpdate(
+        {
+          _id: addressId,
+          user: userId,
+        },
+        {
+          ...dto,
+        },
+        {
+          new: true,
+        },
+      );
+
+      if (!address) {
+        return new ApiResponse(404, {}, Msg.ADDRESS_NOT_FOUND);
+      }
+
+      return new ApiResponse(200, address, Msg.ADDRESS_UPDATED);
+    } catch (error) {
+      console.log('error while updating address', error);
+
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async deleteAddress(userId: string, addressId: string) {
+    try {
+      const address = await this.addressModel.findOneAndDelete({
+        _id: addressId,
+        user: userId,
+      });
+
+      if (!address) {
+        return new ApiResponse(404, {}, Msg.ADDRESS_NOT_FOUND);
+      }
+
+      return new ApiResponse(200, {}, Msg.ADDRESS_DELETED);
+    } catch (error) {
+      console.log('error while deleting address', error);
+
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
 }
