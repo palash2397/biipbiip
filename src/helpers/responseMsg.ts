@@ -67,4 +67,10 @@ export const Msg = {
   OTP_RESENT: `OTP resent successfully`,
   OTP_LIMIT_EXCEEDED: `OTP request limit exceeded, please try again later`,
   OTP_NOT_FOUND: `OTP not found. Please request a new OTP.`,
+
+  ADDRESS_CREATED: 'Address created successfully',
+  ADDRESS_FETCHED: 'Addresses fetched successfully',
+  ADDRESS_UPDATED: 'Address updated successfully',
+  ADDRESS_DELETED: 'Address deleted successfully',
+  ADDRESS_NOT_FOUND: 'Address not found',
 };
