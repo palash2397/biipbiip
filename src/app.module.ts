@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/databese.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AddressModule } from './modules/address/address.module';
+import { RideTypeModule } from './modules/ride-type/ride-type.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AddressModule } from './modules/address/address.module';
     UserModule,
     AuthModule,
     AddressModule,
+    RideTypeModule,
   ],
   controllers: [AppController],
   providers: [],
