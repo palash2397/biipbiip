@@ -78,6 +78,10 @@ export class UserService {
         await updatedUser.save();
       }
 
+      updatedUser.avatar = updatedUser.avatar
+        ? `${process.env.BASE_URL}/api/v1/uploads/profile/${updatedUser.avatar}`
+        : process.env.DEFAULT_IMAGE;
+
       return new ApiResponse(200, updatedUser, Msg.USER_UPDATED);
     } catch (error) {
       console.log('error while updating profile', error);
