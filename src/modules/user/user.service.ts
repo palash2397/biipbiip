@@ -78,7 +78,7 @@ export class UserService {
         await updatedUser.save();
       }
 
-      return new ApiResponse(200, {}, Msg.USER_UPDATED);
+      return new ApiResponse(200, updatedUser, Msg.USER_UPDATED);
     } catch (error) {
       console.log('error while updating profile', error);
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
