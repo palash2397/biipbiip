@@ -32,11 +32,11 @@ export class SupportController {
     return this.supportService.createTicket(req.user.id, dto);
   }
 
-  @Get('/my')
-  @Roles(UserRole.PASSENGER)
-  getMyTickets(@Req() req: any) {
-    return this.supportService.getMyTickets(req.user.id);
-  }
+  // @Get('/my')
+  // @Roles(UserRole.PASSENGER)
+  // getMyTickets(@Req() req: any) {
+  //   return this.supportService.getMyTickets(req.user.id);
+  // }
 
   @Get('/all')
   @Roles(UserRole.SUPERADMIN)
