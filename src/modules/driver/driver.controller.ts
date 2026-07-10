@@ -6,15 +6,17 @@ import {
   Req,
   UseInterceptors,
   UploadedFiles,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags, ApiConsumes } from '@nestjs/swagger';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { multerConfig } from 'src/common/middlewares/multer';
 
 import { DriverService } from './driver.service';
-import { UpdateDriverDetailsDto } from './dto/update-driver-details.dto';
+import { UpdateDriverBasicDetailsDto } from './dto/update-driver-basic-details.dto';
+import { UpdateDriverDocumentsDto } from './dto/update-driver-documents.dto';
 
 @ApiTags('Driver')
 @ApiBearerAuth('access-token')
@@ -23,7 +25,18 @@ import { UpdateDriverDetailsDto } from './dto/update-driver-details.dto';
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
-  @Patch('/details')
+  @Patch('/basic-details')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('avatar', multerConfig('profile')))
+  updateBasicDetails(
+    @Req() req: any,
+    @Body() dto: UpdateDriverBasicDetailsDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.driverService.updateBasicDetails(req.user.id, dto, file);
+  }
+
+  @Patch('/documents')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -39,11 +52,11 @@ export class DriverController {
       multerConfig('driver'),
     ),
   )
-  updateDriverDetails(
+  updateDocuments(
     @Req() req: any,
-    @Body() dto: UpdateDriverDetailsDto,
+    @Body() dto: UpdateDriverDocumentsDto,
     @UploadedFiles() files?: any,
   ) {
-    return this.driverService.updateDriverDetails(req.user.id, dto, files);
+    return this.driverService.updateDocuments(req.user.id, files);
   }
 }

@@ -7,25 +7,77 @@ import { Msg } from 'src/helpers/responseMsg';
 import { deleteOldFile } from 'src/helpers/index';
 
 import { Driver, DriverDocument } from './schema/driver.schema';
-import { UpdateDriverDetailsDto } from './dto/update-driver-details.dto';
+import { User, UserDocument } from 'src/modules/user/schema/user.schema';
+import { UpdateDriverBasicDetailsDto } from './dto/update-driver-basic-details.dto';
 
 @Injectable()
 export class DriverService {
   constructor(
     @InjectModel(Driver.name) private driverModel: Model<DriverDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async updateDriverDetails(
+  async updateBasicDetails(
     userId: string,
-    dto: UpdateDriverDetailsDto,
-    files?: any,
+    dto: UpdateDriverBasicDetailsDto,
+    file?: Express.Multer.File,
   ) {
+    try {
+      const { firstName, lastName, email, ...driverDto } = dto;
+
+      const user = await this.userModel.findOne({ _id: userId });
+      if (!user) {
+        return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
+      }
+
+      // Update User profile
+      const userUpdatePayload: any = {};
+      if (firstName) userUpdatePayload.firstName = firstName;
+      if (lastName) userUpdatePayload.lastName = lastName;
+      if (email) userUpdatePayload.email = email;
+
+      const updatedUser = await this.userModel.findOneAndUpdate(
+        { _id: userId },
+        userUpdatePayload,
+        { new: true },
+      );
+
+      if (!updatedUser) {
+        return new ApiResponse(400, {}, Msg.SERVER_ERROR);
+      }
+
+      if (file) {
+        if (user.avatar) {
+          deleteOldFile('user', user.avatar);
+        }
+        updatedUser.avatar = file.filename;
+        await updatedUser.save();
+      }
+
+      const updatedDriver = await this.driverModel.findOneAndUpdate(
+        { user: userId },
+        { ...driverDto, user: userId },
+        { new: true, upsert: true },
+      );
+
+      if (!updatedDriver) {
+        return new ApiResponse(400, {}, Msg.SERVER_ERROR);
+      }
+
+      return new ApiResponse(200, updatedDriver, Msg.DRIVER_UPDATED);
+    } catch (error) {
+      console.log('Error updating driver basic details:', error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async updateDocuments(userId: string, files?: any) {
     try {
       const driver = await this.driverModel.findOne({ user: userId });
 
       const updatedDriver = await this.driverModel.findOneAndUpdate(
         { user: userId },
-        { ...dto, user: userId },
+        { user: userId },
         { new: true, upsert: true },
       );
 
@@ -122,7 +174,7 @@ export class DriverService {
 
       return new ApiResponse(200, updatedDriver, Msg.DRIVER_UPDATED);
     } catch (error) {
-      console.log('Error updating driver details:', error);
+      console.log('Error updating driver documents:', error);
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }

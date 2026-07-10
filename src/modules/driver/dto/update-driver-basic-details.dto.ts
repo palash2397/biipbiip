@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateDriverDetailsDto {
+export class UpdateDriverBasicDetailsDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -54,26 +54,6 @@ export class UpdateDriverDetailsDto {
 
   // File fields for Swagger UI
   @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  @IsOptional()
   avatar?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  nationalIdFront?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  nationalIdBack?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  driverLicenseFront?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  driverLicenseBack?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  vehicleRegistrationFront?: any;
-
-  @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  vehicleRegistrationBack?: any;
-
-  @ApiPropertyOptional({ type: 'array', items: { type: 'string', format: 'binary' } })
-  vehiclePhotos?: any[];
 }
