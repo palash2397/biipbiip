@@ -49,6 +49,13 @@ export class Driver {
 
   @Prop({ type: [String], default: [] })
   vehiclePhotos?: string[];
+
+  @Prop({
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
+  })
+  verificationStatus: string;
 }
 
 export const DriverSchema = SchemaFactory.createForClass(Driver);
