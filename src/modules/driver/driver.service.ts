@@ -17,6 +17,58 @@ export class DriverService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
+  async myProfile(userId: string) {
+    try {
+      const driver = await this.driverModel
+        .findOne({ user: userId })
+        .populate(
+          'user',
+          'firstName lastName email avatar phoneNumber countryCode',
+        )
+        .lean();
+
+      if (!driver) {
+        return new ApiResponse(404, {}, 'Driver profile not found');
+      }
+
+      const baseUrl = process.env.BASE_URL;
+
+      // Format User avatar
+      if (driver.user) {
+        const user = driver.user as any;
+        user.avatar = user.avatar
+          ? `${baseUrl}/api/v1/uploads/profile/${user.avatar}`
+          : process.env.DEFAULT_IMAGE;
+      }
+
+      // Format Driver documents
+      const formatUrl = (fileName?: string) =>
+        fileName ? `${baseUrl}/api/v1/uploads/driver/${fileName}` : undefined;
+
+      driver.nationalIdFront = formatUrl(driver.nationalIdFront);
+      driver.nationalIdBack = formatUrl(driver.nationalIdBack);
+      driver.driverLicenseFront = formatUrl(driver.driverLicenseFront);
+      driver.driverLicenseBack = formatUrl(driver.driverLicenseBack);
+      driver.vehicleRegistrationFront = formatUrl(
+        driver.vehicleRegistrationFront,
+      );
+      driver.vehicleRegistrationBack = formatUrl(
+        driver.vehicleRegistrationBack,
+      );
+
+      if (driver.vehiclePhotos && driver.vehiclePhotos.length > 0) {
+        driver.vehiclePhotos = driver.vehiclePhotos.map(
+          (photo) => `${baseUrl}/api/v1/uploads/driver/${photo}`,
+        );
+      }
+
+      return new ApiResponse(200, driver, Msg.DRIVER_FETCHED);
+    } catch (error) {
+      console.log('Error getting driver profile:', error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
   async updateBasicDetails(
     userId: string,
     dto: UpdateDriverBasicDetailsDto,
@@ -104,7 +156,8 @@ export class DriverService {
           if (driver && driver.driverLicenseFront) {
             deleteOldFile('driver', driver.driverLicenseFront);
           }
-          updatedDriver.driverLicenseFront = files.driverLicenseFront[0].filename;
+          updatedDriver.driverLicenseFront =
+            files.driverLicenseFront[0].filename;
         }
 
         if (files.driverLicenseBack) {
@@ -118,23 +171,31 @@ export class DriverService {
           if (driver && driver.vehicleRegistrationFront) {
             deleteOldFile('driver', driver.vehicleRegistrationFront);
           }
-          updatedDriver.vehicleRegistrationFront = files.vehicleRegistrationFront[0].filename;
+          updatedDriver.vehicleRegistrationFront =
+            files.vehicleRegistrationFront[0].filename;
         }
 
         if (files.vehicleRegistrationBack) {
           if (driver && driver.vehicleRegistrationBack) {
             deleteOldFile('driver', driver.vehicleRegistrationBack);
           }
-          updatedDriver.vehicleRegistrationBack = files.vehicleRegistrationBack[0].filename;
+          updatedDriver.vehicleRegistrationBack =
+            files.vehicleRegistrationBack[0].filename;
         }
 
         if (files.vehiclePhotos) {
-          if (driver && driver.vehiclePhotos && driver.vehiclePhotos.length > 0) {
+          if (
+            driver &&
+            driver.vehiclePhotos &&
+            driver.vehiclePhotos.length > 0
+          ) {
             driver.vehiclePhotos.forEach((photo) => {
               deleteOldFile('driver', photo);
             });
           }
-          updatedDriver.vehiclePhotos = files.vehiclePhotos.map((f: any) => f.filename);
+          updatedDriver.vehiclePhotos = files.vehiclePhotos.map(
+            (f: any) => f.filename,
+          );
         }
 
         await updatedDriver.save();
@@ -158,17 +219,22 @@ export class DriverService {
         ? `${baseUrl}/api/v1/uploads/driver/${updatedDriver.driverLicenseBack}`
         : undefined;
 
-      updatedDriver.vehicleRegistrationFront = updatedDriver.vehicleRegistrationFront
-        ? `${baseUrl}/api/v1/uploads/driver/${updatedDriver.vehicleRegistrationFront}`
-        : undefined;
+      updatedDriver.vehicleRegistrationFront =
+        updatedDriver.vehicleRegistrationFront
+          ? `${baseUrl}/api/v1/uploads/driver/${updatedDriver.vehicleRegistrationFront}`
+          : undefined;
 
-      updatedDriver.vehicleRegistrationBack = updatedDriver.vehicleRegistrationBack
-        ? `${baseUrl}/api/v1/uploads/driver/${updatedDriver.vehicleRegistrationBack}`
-        : undefined;
+      updatedDriver.vehicleRegistrationBack =
+        updatedDriver.vehicleRegistrationBack
+          ? `${baseUrl}/api/v1/uploads/driver/${updatedDriver.vehicleRegistrationBack}`
+          : undefined;
 
-      if (updatedDriver.vehiclePhotos && updatedDriver.vehiclePhotos.length > 0) {
+      if (
+        updatedDriver.vehiclePhotos &&
+        updatedDriver.vehiclePhotos.length > 0
+      ) {
         updatedDriver.vehiclePhotos = updatedDriver.vehiclePhotos.map(
-          (photo) => `${baseUrl}/api/v1/uploads/driver/${photo}`
+          (photo) => `${baseUrl}/api/v1/uploads/driver/${photo}`,
         );
       }
 

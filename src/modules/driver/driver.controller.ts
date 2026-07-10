@@ -4,6 +4,7 @@ import {
   Body,
   UseGuards,
   Req,
+  Get,
   UseInterceptors,
   UploadedFiles,
   UploadedFile,
@@ -24,6 +25,11 @@ import { UpdateDriverDocumentsDto } from './dto/update-driver-documents.dto';
 @Controller('driver')
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
+
+  @Get('/profile')
+  getMyProfile(@Req() req: any) {
+    return this.driverService.myProfile(req.user.id);
+  }
 
   @Patch('/basic-details')
   @ApiConsumes('multipart/form-data')
