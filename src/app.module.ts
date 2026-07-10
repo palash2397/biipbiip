@@ -9,6 +9,7 @@ import { AddressModule } from './modules/address/address.module';
 import { RideTypeModule } from './modules/ride-type/ride-type.module';
 import { FaqModule } from './modules/faq/faq.module';
 import { SupportModule } from './modules/support/support.module';
+import { DriverModule } from './modules/driver/driver.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SupportModule } from './modules/support/support.module';
     RideTypeModule,
     FaqModule,
     SupportModule,
+    DriverModule,
   ],
   controllers: [AppController],
   providers: [],
