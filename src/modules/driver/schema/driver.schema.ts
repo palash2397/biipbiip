@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { VerificationStatus } from 'src/common/enums/driver/verification-status.enum';
 
 export type DriverDocument = HydratedDocument<Driver>;
 
@@ -52,10 +53,10 @@ export class Driver {
 
   @Prop({
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending',
+    enum: VerificationStatus,
+    default: VerificationStatus.PENDING,
   })
-  verificationStatus: string;
+  verificationStatus: VerificationStatus;
 }
 
 export const DriverSchema = SchemaFactory.createForClass(Driver);
