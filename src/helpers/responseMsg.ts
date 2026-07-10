@@ -84,4 +84,7 @@ export const Msg = {
   SUPPORT_FETCHED: 'Support requests fetched successfully',
   SUPPORT_UPDATED: 'Support request updated successfully',
   SUPPORT_NOT_FOUND: 'Support request not found',
+
+  DRIVER_UPDATED: 'Driver details updated successfully',
+  DRIVER_FETCHED: 'Driver details fetched successfully',
 };
