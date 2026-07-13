@@ -98,7 +98,7 @@ export class DriverService {
     file?: Express.Multer.File,
   ) {
     try {
-      const { firstName, lastName, email, ...driverDto } = dto;
+      const { firstName, lastName, email, gender, ...driverDto } = dto;
 
       const user = await this.userModel.findOne({ _id: userId });
       if (!user) {
@@ -110,6 +110,7 @@ export class DriverService {
       if (firstName) userUpdatePayload.firstName = firstName;
       if (lastName) userUpdatePayload.lastName = lastName;
       if (email) userUpdatePayload.email = email;
+      if (gender) userUpdatePayload.gender = gender;
 
       const updatedUser = await this.userModel.findOneAndUpdate(
         { _id: userId },

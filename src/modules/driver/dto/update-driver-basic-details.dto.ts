@@ -20,6 +20,11 @@ export class UpdateDriverBasicDetailsDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  gender?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   nationalIdNumber?: string;
 
   @ApiPropertyOptional()
