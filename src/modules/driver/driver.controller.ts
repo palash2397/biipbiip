@@ -31,6 +31,11 @@ export class DriverController {
     return this.driverService.myProfile(req.user.id);
   }
 
+  @Patch('/status/toggle')
+  toggleStatus(@Req() req: any) {
+    return this.driverService.toggleStatus(req.user.id);
+  }
+
   @Patch('/basic-details')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar', multerConfig('profile')))

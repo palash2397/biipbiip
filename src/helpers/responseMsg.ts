@@ -87,4 +87,5 @@ export const Msg = {
 
   DRIVER_UPDATED: 'Driver details updated successfully',
   DRIVER_FETCHED: 'Driver details fetched successfully',
+  DRIVER_STATUS_UPDATED: 'Driver status updated successfully',
 };

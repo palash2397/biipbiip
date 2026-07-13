@@ -57,6 +57,9 @@ export class Driver {
     default: VerificationStatus.PENDING,
   })
   verificationStatus: VerificationStatus;
+
+  @Prop({ type: Boolean, default: false })
+  isOnline: boolean;
 }
 
 export const DriverSchema = SchemaFactory.createForClass(Driver);

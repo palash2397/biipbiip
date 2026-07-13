@@ -69,6 +69,29 @@ export class DriverService {
     }
   }
 
+  async toggleStatus(userId: string) {
+    try {
+      const driver = await this.driverModel.findOne({ user: userId });
+      if (!driver) {
+        return new ApiResponse(404, {}, 'Driver profile not found');
+      }
+
+      driver.isOnline = !driver.isOnline;
+      await driver.save();
+
+      const msg = driver.isOnline ? 'online' : 'offline';
+
+      return new ApiResponse(
+        200,
+        { isOnline: driver.isOnline },
+        `Driver status marked ${msg}`,
+      );
+    } catch (error) {
+      console.log('Error toggling driver status:', error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
   async updateBasicDetails(
     userId: string,
     dto: UpdateDriverBasicDetailsDto,
