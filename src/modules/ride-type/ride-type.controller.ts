@@ -60,7 +60,7 @@ export class RideTypeController {
   }
 
   @Delete('/:id')
-  @Roles(UserRole.SUPERADMIN)
+  @Roles(UserRole.SUPERADMIN, UserRole.PASSENGER)
   deleteRideType(@Param('id') id: string) {
     return this.rideTypeService.deleteRideType(id);
   }
