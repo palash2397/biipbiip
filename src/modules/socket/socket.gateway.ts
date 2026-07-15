@@ -67,7 +67,13 @@ export class SocketGateway
       return;
     }
 
-    await client.join(`user:${user.id}`);
+    const room = `user:${user.id}`;
+
+    await client.join(room);
+
+    console.log('Socket connected ---------->', client.id);
+    console.log('User ID ---------->', user.id);
+    console.log('Joined room ---------->', room);
 
     console.log(`Socket connected: ${user.id}`);
   }

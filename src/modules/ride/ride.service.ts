@@ -133,7 +133,7 @@ export class RideService {
       const nearbyDrivers = await this.driverModel
         .find({
           isOnline: true,
-          verificationStatus: VerificationStatus.APPROVED,
+          // verificationStatus: VerificationStatus.APPROVED,
 
           currentLocation: {
             $near: {
@@ -148,8 +148,30 @@ export class RideService {
         .populate('user')
         .lean();
 
+      console.log('nearby drivers count ---------->', nearbyDrivers.length);
+
+      console.log(
+        'nearby drivers ---------->',
+        JSON.stringify(nearbyDrivers, null, 2),
+      );
+
+      // const nearbyDrivers = await this.driverModel
+      //   .find({
+      //     isOnline: true,
+      //     verificationStatus: VerificationStatus.APPROVED,
+      //   })
+      //   .populate('user')
+      //   .lean();
+
+      console.log('nearby drivers ---------->', nearbyDrivers);
+
       for (const driver of nearbyDrivers) {
         const driverUser: any = driver.user;
+
+        console.log(
+          'sending ride to driver user ---------->',
+          driverUser?._id?.toString(),
+        );
 
         if (!driverUser?._id) {
           continue;

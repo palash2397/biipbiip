@@ -14,7 +14,19 @@ export class SocketService {
   }
 
   emitToUser(userId: string, event: string, data: any) {
-    if (!this.server) return;
+    if (!this.server) {
+      console.log('Socket server not initialized');
+      return;
+    }
+
+    const room = `user:${userId}`;
+
+    console.log('socket room ---------->', room);
+    console.log('socket event ---------->', event);
+
+    const sockets = this.server.sockets.adapter.rooms.get(room);
+
+    console.log('connected sockets in room ---------->', sockets?.size || 0);
 
     this.server.to(`user:${userId}`).emit(event, data);
   }
