@@ -9,6 +9,7 @@ import { deleteOldFile } from 'src/helpers/index';
 import { Driver, DriverDocument } from './schema/driver.schema';
 import { User, UserDocument } from 'src/modules/user/schema/user.schema';
 import { UpdateDriverBasicDetailsDto } from './dto/update-driver-basic-details.dto';
+import { UpdateDriverLocationDto } from './dto/update-driver-location.dto';
 
 @Injectable()
 export class DriverService {
@@ -274,6 +275,45 @@ export class DriverService {
     } catch (error) {
       console.log('Error updating driver documents:', error);
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async updateDriverLocation(userId: string, dto: UpdateDriverLocationDto) {
+    try {
+      const driver = await this.driverModel.findOneAndUpdate(
+        {
+          user: userId,
+          isOnline: true,
+        },
+        {
+          currentLocation: {
+            type: 'Point',
+            coordinates: [dto.longitude, dto.latitude],
+          },
+        },
+        {
+          new: true,
+        },
+      );
+
+      if (!driver) {
+        return {
+          success: false,
+          message: Msg.DRIVER_NOT_ONLINE,
+        };
+      }
+
+      return {
+        success: true,
+        message: Msg.LOCATION_UPDATED,
+      };
+    } catch (error) {
+      console.log('error while updating driver location', error);
+
+      return {
+        success: false,
+        message: Msg.SERVER_ERROR,
+      };
     }
   }
 }

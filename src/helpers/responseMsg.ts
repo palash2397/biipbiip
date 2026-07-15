@@ -88,6 +88,7 @@ export const Msg = {
   DRIVER_UPDATED: 'Driver details updated successfully',
   DRIVER_FETCHED: 'Driver details fetched successfully',
   DRIVER_STATUS_UPDATED: 'Driver status updated successfully',
+  DRIVER_NOT_ONLINE: 'Driver is not online',
 
   RIDE_TYPE_CREATED: 'Ride type created successfully',
   RIDE_TYPE_FETCHED: 'Ride types fetched successfully',
@@ -98,4 +99,11 @@ export const Msg = {
   ROUTE_NOT_FOUND: 'Route not found',
 
   FARE_ESTIMATED: 'Fare estimated successfully',
+
+  // Location
+  LOCATION_UPDATED: 'Location updated successfully',
+  LOCATION_FETCHED: 'Location fetched successfully',
+  LOCATION_NOT_FOUND: 'Location not found',
+  LOCATION_DELETED: 'Location deleted successfully',
+  LOCATION_CREATED: 'Location created successfully',
 };

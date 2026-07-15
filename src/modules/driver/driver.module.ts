@@ -20,6 +20,8 @@ import { DriverController } from './driver.controller';
       { name: Driver.name, schema: DriverSchema },
       { name: User.name, schema: UserSchema },
     ]),
+
+    DriverService,
   ],
 })
 export class DriverModule {}
