@@ -88,4 +88,10 @@ export const Msg = {
   DRIVER_UPDATED: 'Driver details updated successfully',
   DRIVER_FETCHED: 'Driver details fetched successfully',
   DRIVER_STATUS_UPDATED: 'Driver status updated successfully',
+
+  RIDE_TYPE_CREATED: 'Ride type created successfully',
+  RIDE_TYPE_FETCHED: 'Ride types fetched successfully',
+  RIDE_TYPE_UPDATED: 'Ride type updated successfully',
+  RIDE_TYPE_DELETED: 'Ride type deleted successfully',
+  RIDE_TYPE_NOT_FOUND: 'Ride type not found',
 };
