@@ -13,6 +13,8 @@ import { VerificationStatus } from 'src/common/enums/driver/verification-status.
 
 import { Ride, RideDocument } from './schema/ride.schema';
 
+import { AcceptRideDto } from './dto/accept-ride.dto';
+
 import {
   RideType,
   RideTypeDocument,
@@ -163,15 +165,15 @@ export class RideService {
       //   .populate('user')
       //   .lean();
 
-      console.log('nearby drivers ---------->', nearbyDrivers);
+      // console.log('nearby drivers ---------->', nearbyDrivers);
 
       for (const driver of nearbyDrivers) {
         const driverUser: any = driver.user;
 
-        console.log(
-          'sending ride to driver user ---------->',
-          driverUser?._id?.toString(),
-        );
+        // console.log(
+        //   'sending ride to driver user ---------->',
+        //   driverUser?._id?.toString(),
+        // );
 
         if (!driverUser?._id) {
           continue;
@@ -213,6 +215,65 @@ export class RideService {
       );
     } catch (error) {
       console.log('error while booking ride', error);
+
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async acceptRide(userId: string, dto: AcceptRideDto) {
+    try {
+      const driver = await this.driverModel.findOne({
+        user: userId,
+        isOnline: true,
+        // verificationStatus: VerificationStatus.APPROVED,
+      });
+
+      if (!driver) {
+        return new ApiResponse(404, {}, Msg.DRIVER_NOT_AVAILABLE);
+      }
+
+      const ride = await this.rideModel.findOneAndUpdate(
+        {
+          _id: dto.rideId,
+          driver: null,
+          status: RideStatus.SEARCHING_DRIVER,
+        },
+        {
+          driver: driver._id,
+          status: RideStatus.DRIVER_FOUND,
+        },
+        {
+          new: true,
+        },
+      );
+
+      if (!ride) {
+        return new ApiResponse(404, {}, Msg.RIDE_ALREADY_ACCEPTED);
+      }
+
+      const rideData = await this.rideModel
+        .findById(ride._id)
+        .populate('driver')
+        .populate('rideType')
+        .lean();
+
+      this.socketService.emitToUser(
+        ride.user.toString(),
+        'driverFound',
+        rideData,
+      );
+
+      return new ApiResponse(
+        201,
+        {
+          ride,
+          driver,
+          rideData,
+        },
+        Msg.RIDE_ACCEPTED,
+      );
+    } catch (error) {
+      console.log('error while accepting ride', error);
 
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }

@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { RideService } from './ride.service';
 import { RideController } from './ride.controller';
+import { RideGateway } from './ride.gateway';
 
 import { Ride, RideSchema } from './schema/ride.schema';
 import { Driver, DriverSchema } from '../driver/schema/driver.schema';
@@ -11,7 +12,7 @@ import { RideType, RideTypeSchema } from '../ride-type/schema/ride-type.schema';
 
 @Module({
   controllers: [RideController],
-  providers: [RideService],
+  providers: [RideService, RideGateway],
   imports: [
     MongooseModule.forFeature([
       {
