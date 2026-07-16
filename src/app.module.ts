@@ -12,6 +12,7 @@ import { SupportModule } from './modules/support/support.module';
 import { DriverModule } from './modules/driver/driver.module';
 import { SocketModule } from './modules/socket/socket.module';
 import { RideModule } from './modules/ride/ride.module';
+import { AvailableCarsModule } from './modules/available-cars/available-cars.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RideModule } from './modules/ride/ride.module';
     DriverModule,
     SocketModule,
     RideModule,
+    AvailableCarsModule,
   ],
   controllers: [AppController],
   providers: [],
