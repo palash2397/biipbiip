@@ -11,6 +11,7 @@ import { AcceptRideDto } from './dto/accept-ride.dto';
 import { RoleGuard } from '../auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
 import { UserRole } from 'src/common/enums/user/role.enum';
+import { CancelRideDto } from './dto/cancel-ride.dto';
 
 @ApiTags('Ride')
 @ApiBearerAuth('access-token')
@@ -31,9 +32,9 @@ export class RideController {
     return this.rideService.acceptRide(req.user.id, dto);
   }
 
-  //   @Post('/cancelRide')
-  // @Roles(UserRole.DRIVER, UserRole.SUPERADMIN)
-  // cancelRide(@Req() req: any, @Body() dto:) {
-  //   return this.rideService.acceptRide(req.user.id, dto);
-  // }
+  @Post('/cancelRide')
+  @Roles(UserRole.PASSENGER, UserRole.SUPERADMIN, UserRole.DRIVER)
+  cancelRide(@Req() req: any, @Body() dto: CancelRideDto) {
+    return this.rideService.cancelRide(req.user.id, dto);
+  }
 }
