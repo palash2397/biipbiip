@@ -5,15 +5,17 @@ import axios from 'axios';
 
 import { ApiResponse } from 'src/helpers/ApiResponse';
 import { Msg } from 'src/helpers/responseMsg';
+import { UserRole } from 'src/common/enums/user/role.enum';
 
 import { BookRideDto } from './dto/book-ride.dto';
 
 import { RideStatus } from 'src/common/enums/ride/ride-enum';
 import { VerificationStatus } from 'src/common/enums/driver/verification-status.enum';
-
 import { Ride, RideDocument } from './schema/ride.schema';
 
 import { AcceptRideDto } from './dto/accept-ride.dto';
+import { RejectRideDto } from './dto/reject-ride.dto';
+import { CancelRideDto } from './dto/cancel-ride.dto';
 
 import {
   RideType,
@@ -278,4 +280,150 @@ export class RideService {
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }
+
+  async rejectRide(userId: string, dto: RejectRideDto) {
+    try {
+    } catch (error) {}
+  }
+
+  // async cancelRide(userId: string, dto: CancelRideDto) {
+  //   try {
+  //     const ride = await this.rideModel
+  //       .findById(dto.rideId)
+  //       .populate('user')
+  //       .populate('driver');
+
+  //     if (!ride) {
+  //       return new ApiResponse(404, {}, Msg.RIDE_NOT_FOUND);
+  //     }
+
+  //     if (ride.status === RideStatus.COMPLETED) {
+  //       return new ApiResponse(400, {}, Msg.RIDE_ALREADY_COMPLETED);
+  //     }
+
+  //     if (ride.status === RideStatus.CANCELLED) {
+  //       return new ApiResponse(400, {}, Msg.RIDE_ALREADY_CANCELLED);
+  //     }
+
+  //     const driver = await this.driverModel.findOne({
+  //       user: userId,
+  //     });
+
+  //     /**
+  //      * USER CANCELLED
+  //      */
+  //     if (ride.user._id.toString() === userId) {
+  //       ride.status = RideStatus.CANCELLED;
+  //       ride.cancelledBy = 'USER';
+  //       ride.cancelReason = dto.reason || '';
+
+  //       await ride.save();
+
+  //       if (ride.driver) {
+  //         this.socketService.emitToUser(
+  //           ride.driver.user.toString(),
+  //           'passengerCancelledRide',
+  //           ride,
+  //         );
+  //       } else {
+  //         this.socketService.emitToRide(
+  //           ride._id.toString(),
+  //           'rideCancelled',
+  //           ride,
+  //         );
+  //       }
+
+  //       return new ApiResponse(200, ride, Msg.RIDE_CANCELLED);
+  //     }
+
+  //     /**
+  //      * DRIVER CANCELLED
+  //      */
+  //     if (
+  //       driver &&
+  //       ride.driver &&
+  //       ride.driver._id.toString() === driver._id.toString()
+  //     ) {
+  //       ride.driver = null;
+
+  //       ride.status = RideStatus.SEARCHING_DRIVER;
+
+  //       await ride.save();
+
+  //       this.socketService.emitToUser(
+  //         ride.user._id.toString(),
+  //         'searchingNewDriver',
+  //         ride,
+  //       );
+
+  //       /**
+  //        * search another driver
+  //        */
+
+  //       const nearbyDrivers = await this.driverModel
+  //         .find({
+  //           _id: {
+  //             $nin: ride.rejectedDrivers,
+  //           },
+
+  //           isOnline: true,
+
+  //           verificationStatus: VerificationStatus.APPROVED,
+
+  //           currentLocation: {
+  //             $near: {
+  //               $geometry: {
+  //                 type: 'Point',
+
+  //                 coordinates: [ride.pickupLongitude, ride.pickupLatitude],
+  //               },
+
+  //               $maxDistance: 5000,
+  //             },
+  //           },
+  //         })
+  //         .populate('user');
+
+  //       for (const nearbyDriver of nearbyDrivers) {
+  //         this.socketService.emitToUser(
+  //           nearbyDriver.user._id.toString(),
+
+  //           'newRideRequest',
+
+  //           {
+  //             rideId: ride._id,
+
+  //             pickupAddress: ride.pickupAddress,
+
+  //             pickupLatitude: ride.pickupLatitude,
+
+  //             pickupLongitude: ride.pickupLongitude,
+
+  //             destinationAddress: ride.destinationAddress,
+
+  //             destinationLatitude: ride.destinationLatitude,
+
+  //             destinationLongitude: ride.destinationLongitude,
+
+  //             distance: ride.distance,
+
+  //             estimatedTime: ride.estimatedTime,
+
+  //             estimatedFare: ride.estimatedFare,
+
+  //             rideType: ride.rideType,
+  //           },
+  //         );
+  //       }
+
+  //       return new ApiResponse(200, ride, Msg.RIDE_CANCELLED);
+  //     }
+
+  //     return new ApiResponse(403, {}, 'Unauthorized');
+  //   } catch (error) {
+  //     console.log(error);
+
+  //     return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+  //   }
+  // }
 }

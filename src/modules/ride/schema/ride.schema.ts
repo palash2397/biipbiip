@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
+import { UserRole } from 'src/common/enums/user/role.enum';
+
 import { User } from 'src/modules/user/schema/user.schema';
 import { Driver } from 'src/modules/driver/schema/driver.schema';
 import { RideType } from 'src/modules/ride-type/schema/ride-type.schema';
@@ -65,11 +67,29 @@ export class Ride {
   })
   status: RideStatus;
 
+  // @Prop({
+  //   type: [{ type: Types.ObjectId, ref: Driver.name }],
+  //   default: [],
+  // })
+  // rejectedDrivers: Types.ObjectId[];
+
   @Prop({
-    type: [{ type: Types.ObjectId, ref: Driver.name }],
-    default: [],
+    type: String,
+    default: null,
   })
-  rejectedDrivers: Types.ObjectId[];
+  cancelReason: string;
+
+  @Prop({
+    type: String,
+    enum: [
+      UserRole.PASSENGER,
+      UserRole.DRIVER,
+      UserRole.USER,
+      UserRole.SUPERADMIN,
+    ],
+    default: null,
+  })
+  cancelledBy: UserRole;
 }
 
 export const RideSchema = SchemaFactory.createForClass(Ride);

@@ -126,6 +126,9 @@ export const Msg = {
   RIDE_DELETED: 'Ride deleted successfully',
   RIDE_ALREADY_ACCEPTED: 'Ride already accepted',
   RIDE_ACCEPTED: 'Ride accepted successfully',
+  RIDE_CANCELLED: 'Ride cancelled successfully',
+  RIDE_ALREADY_CANCELLED: 'Ride already cancelled',
+  RIDE_ALREADY_COMPLETED: 'Ride already completed',
   RIDE_NOT_FOUND: 'Ride not found',
   ACTIVE_RIDE_EXISTS: 'You already have an active ride',
 };

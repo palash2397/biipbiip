@@ -9,6 +9,9 @@ import { Socket } from 'socket.io';
 
 import { RideService } from './ride.service';
 import { AcceptRideDto } from './dto/accept-ride.dto';
+// import { RejectRideDto } from './dto/reject-ride.dto';
+
+import { CancelRideDto } from './dto/cancel-ride.dto';
 
 @WebSocketGateway({
   path: '/viamo/socket.io',
@@ -28,4 +31,22 @@ export class RideGateway {
 
     return this.rideService.acceptRide(userId, data);
   }
+
+  // @SubscribeMessage('rejectRide')
+  // async rejectRide(
+  //   @ConnectedSocket() client: Socket,
+  //   @MessageBody() dto: RejectRideDto,
+  // ) {
+  //   return this.rideService.rejectRide(client.data.user.id, dto);
+  // }
+
+  // @SubscribeMessage('cancelRide')
+  // async cancelRide(
+  //   @ConnectedSocket() client: Socket,
+  //   @MessageBody() dto: CancelRideDto,
+  // ) {
+  //   const userId = client.data.user.id;
+
+  //   return this.rideService.cancelRide(userId, dto);
+  // }
 }
