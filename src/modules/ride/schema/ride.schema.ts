@@ -64,6 +64,12 @@ export class Ride {
     default: RideStatus.SEARCHING_DRIVER,
   })
   status: RideStatus;
+
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: Driver.name }],
+    default: [],
+  })
+  rejectedDrivers: Types.ObjectId[];
 }
 
 export const RideSchema = SchemaFactory.createForClass(Ride);
