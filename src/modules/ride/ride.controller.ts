@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -36,5 +36,11 @@ export class RideController {
   @Roles(UserRole.PASSENGER, UserRole.SUPERADMIN, UserRole.DRIVER)
   cancelRide(@Req() req: any, @Body() dto: CancelRideDto) {
     return this.rideService.cancelRide(req.user.id, dto);
+  }
+
+  @Get('/activeRides')
+  @Roles(UserRole.DRIVER, UserRole.SUPERADMIN)
+  activeRides(@Req() req: any) {
+    return this.rideService.findActiveRides(req.user.id);
   }
 }
