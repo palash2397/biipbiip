@@ -38,9 +38,15 @@ export class RideController {
     return this.rideService.cancelRide(req.user.id, dto);
   }
 
-  @Get('/activeRides')
+  @Get('/active-driver-ride')
   @Roles(UserRole.DRIVER, UserRole.SUPERADMIN)
-  activeRides(@Req() req: any) {
+  activeDriverRide(@Req() req: any) {
     return this.rideService.driverActiveRide(req.user.id);
+  }
+
+  @Get('/active-user-ride')
+  @Roles(UserRole.PASSENGER, UserRole.USER, UserRole.SUPERADMIN)
+  activeUserRide(@Req() req: any) {
+    return this.rideService.userActiveRide(req.user.id);
   }
 }
