@@ -49,4 +49,10 @@ export class RideController {
   activeUserRide(@Req() req: any) {
     return this.rideService.userActiveRide(req.user.id);
   }
+
+  @Get('/user-ride-history')
+  @Roles(UserRole.PASSENGER, UserRole.USER, UserRole.SUPERADMIN)
+  userRideHistory(@Req() req: any) {
+    return this.rideService.userRideHistory(req.user.id);
+  }
 }
