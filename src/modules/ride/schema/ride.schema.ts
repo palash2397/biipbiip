@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 import { UserRole } from 'src/common/enums/user/role.enum';
 
@@ -13,21 +13,21 @@ export type RideDocument = HydratedDocument<Ride>;
 @Schema({ timestamps: true })
 export class Ride {
   @Prop({
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     required: true,
   })
   user: Types.ObjectId;
 
   @Prop({
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: Driver.name,
     default: null,
   })
   driver?: Types.ObjectId;
 
   @Prop({
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: RideType.name,
     required: true,
   })

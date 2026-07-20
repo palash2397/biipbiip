@@ -500,25 +500,33 @@ export class RideService {
       const user = await this.userModel.findOne({
         _id: userId,
       });
+
+      // console.log(`user -------->`, user);
       if (!user) {
         return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
       }
 
-      const ride = await this.rideModel
-        .findOne({
-          user: user._id,
-          status: {
-            $in: [
-              RideStatus.SEARCHING_DRIVER,
-              RideStatus.DRIVER_FOUND,
-              RideStatus.DRIVER_ARRIVING,
-              RideStatus.ONGOING,
-            ],
-          },
-        })
-        .populate('user')
-        .populate('driver')
-        .populate('rideType');
+      // const allUserRides = await this.rideModel.find({ user: user._id });
+      // console.log('--- DEBUG: ALL RIDES FOR THIS USER ---');
+      // console.log(allUserRides.map((r) => ({ _id: r._id, status: r.status })));
+      // console.log('----------------------------------------');
+
+      const ride = await this.rideModel.findOne({
+        user: user._id,
+        status: {
+          $in: [
+            RideStatus.SEARCHING_DRIVER,
+            RideStatus.DRIVER_FOUND,
+            RideStatus.DRIVER_ARRIVING,
+            RideStatus.ONGOING,
+          ],
+        },
+      })
+      .populate('user')
+      .populate('driver')
+      .populate('rideType');
+
+      console.log('user active ride', ride);
 
       if (!ride) {
         return new ApiResponse(200, null, Msg.NO_ACTIVE_RIDES_FOUND);

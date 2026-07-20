@@ -8,14 +8,19 @@ import { deleteOldFile } from 'src/helpers/index';
 
 import { Driver, DriverDocument } from './schema/driver.schema';
 import { User, UserDocument } from 'src/modules/user/schema/user.schema';
+import { Ride, RideDocument } from '../ride/schema/ride.schema';
+
 import { UpdateDriverBasicDetailsDto } from './dto/update-driver-basic-details.dto';
 import { UpdateDriverLocationDto } from './dto/update-driver-location.dto';
+
+import { RideStatus } from 'src/common/enums/ride/ride-enum';
 
 @Injectable()
 export class DriverService {
   constructor(
     @InjectModel(Driver.name) private driverModel: Model<DriverDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Ride.name) private rideModel: Model<RideDocument>,
   ) {}
 
   async myProfile(userId: string) {
@@ -301,6 +306,23 @@ export class DriverService {
           success: false,
           message: Msg.DRIVER_NOT_ONLINE,
         };
+      }
+
+      const ride = await this.rideModel.findOne({
+        driver: driver._id,
+        status: {
+          $in: [
+            RideStatus.DRIVER_FOUND,
+            RideStatus.DRIVER_ARRIVING,
+            RideStatus.ONGOING,
+          ],
+        },
+      });
+
+      if (ride) {
+        console.log('ACTIVE RIDE FOUND');
+      } else {
+        console.log('NO ACTIVE RIDE');
       }
 
       return {
