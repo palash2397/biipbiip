@@ -119,6 +119,11 @@ export class RideService {
         user: userId,
         rideType: dto.rideType,
 
+        pickupLocation: {
+          type: 'Point',
+          coordinates: [dto.pickupLongitude, dto.pickupLatitude],
+        },
+
         pickupAddress: dto.pickupAddress,
         pickupLatitude: dto.pickupLatitude,
         pickupLongitude: dto.pickupLongitude,

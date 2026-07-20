@@ -36,6 +36,22 @@ export class Ride {
   @Prop({ type: String, required: true, trim: true })
   pickupAddress: string;
 
+  @Prop({
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point',
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  })
+  pickupLocation: {
+    type: string;
+    coordinates: number[];
+  };
+
   @Prop({ type: Number, required: true })
   pickupLatitude: number;
 
@@ -93,3 +109,7 @@ export class Ride {
 }
 
 export const RideSchema = SchemaFactory.createForClass(Ride);
+
+RideSchema.index({
+  pickupLocation: '2dsphere',
+});
