@@ -529,4 +529,35 @@ export class RideService {
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }
+
+  async userRideHistory(userId: string) {
+    try {
+      const user = await this.userModel.findOne({
+        _id: userId,
+      });
+      if (!user) {
+        return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
+      }
+
+      const rides = await this.rideModel
+        .find({
+          user: user._id,
+          status: {
+            $in: [RideStatus.COMPLETED, RideStatus.CANCELLED],
+          },
+        })
+        .populate('user')
+        .populate('driver')
+        .populate('rideType');
+
+      if (!rides || rides.length === 0) {
+        return new ApiResponse(200, [], Msg.RIDES_NOT_FOUND);
+      }
+
+      return new ApiResponse(200, rides, Msg.RIDES_FETCHED);
+    } catch (error) {
+      console.log(`error while fetching user ride history`, error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
 }

@@ -124,6 +124,7 @@ export const Msg = {
   RIDE_BOOKED: 'Ride booked successfully',
   RIDE_FETCHED: 'Ride fetched successfully',
   RIDES_FETCHED: 'Rides fetched successfully',
+  RIDES_NOT_FOUND: 'No Rides Found',
   RIDE_UPDATED: 'Ride updated successfully',
   RIDE_DELETED: 'Ride deleted successfully',
   RIDE_ALREADY_ACCEPTED: 'Ride already accepted',
