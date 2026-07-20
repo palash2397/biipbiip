@@ -23,6 +23,7 @@ import {
 } from '../ride-type/schema/ride-type.schema';
 
 import { Driver, DriverDocument } from '../driver/schema/driver.schema';
+import { User, UserDocument } from '../user/schema/user.schema';
 
 import { SocketService } from '../socket/socket.service';
 
@@ -37,6 +38,9 @@ export class RideService {
 
     @InjectModel(Driver.name)
     private readonly driverModel: Model<DriverDocument>,
+
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
 
     private readonly socketService: SocketService,
   ) {}
@@ -479,6 +483,41 @@ export class RideService {
           },
         })
         .populate('user')
+        .populate('rideType');
+
+      if (!ride) {
+        return new ApiResponse(200, null, Msg.NO_ACTIVE_RIDES_FOUND);
+      }
+
+      return new ApiResponse(200, ride, Msg.RIDES_FETCHED);
+    } catch (error) {
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async userActiveRide(userId: string) {
+    try {
+      const user = await this.userModel.findOne({
+        _id: userId,
+      });
+      if (!user) {
+        return new ApiResponse(404, {}, Msg.USER_NOT_FOUND);
+      }
+
+      const ride = await this.rideModel
+        .findOne({
+          user: user._id,
+          status: {
+            $in: [
+              RideStatus.SEARCHING_DRIVER,
+              RideStatus.DRIVER_FOUND,
+              RideStatus.DRIVER_ARRIVING,
+              RideStatus.ONGOING,
+            ],
+          },
+        })
+        .populate('user')
+        .populate('driver')
         .populate('rideType');
 
       if (!ride) {
