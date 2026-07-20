@@ -1,3 +1,4 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -32,6 +33,7 @@ export class SocketGateway
   constructor(
     private readonly jwtService: JwtService,
     private readonly socketService: SocketService,
+    @Inject(forwardRef(() => DriverService))
     private readonly driverService: DriverService,
   ) {}
 

@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -25,7 +25,7 @@ import { DriverModule } from '../driver/driver.module';
         schema: DriverSchema,
       },
     ]),
-    DriverModule,
+    forwardRef(() => DriverModule),
   ],
   providers: [SocketGateway, SocketService],
   exports: [SocketService],

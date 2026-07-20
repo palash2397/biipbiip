@@ -14,6 +14,7 @@ import { UpdateDriverBasicDetailsDto } from './dto/update-driver-basic-details.d
 import { UpdateDriverLocationDto } from './dto/update-driver-location.dto';
 
 import { RideStatus } from 'src/common/enums/ride/ride-enum';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class DriverService {
@@ -21,6 +22,7 @@ export class DriverService {
     @InjectModel(Driver.name) private driverModel: Model<DriverDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Ride.name) private rideModel: Model<RideDocument>,
+    private readonly socketService: SocketService,
   ) {}
 
   async myProfile(userId: string) {
@@ -320,7 +322,15 @@ export class DriverService {
       });
 
       if (ride) {
-        console.log('ACTIVE RIDE FOUND');
+        this.socketService.emitToUser(
+          ride.user.toString(),
+          'driverLocationUpdated',
+          {
+            rideId: ride._id,
+            latitude: dto.latitude,
+            longitude: dto.longitude,
+          },
+        );
       } else {
         console.log('NO ACTIVE RIDE');
       }
