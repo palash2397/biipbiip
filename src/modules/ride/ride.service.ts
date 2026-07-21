@@ -16,6 +16,7 @@ import { Ride, RideDocument } from './schema/ride.schema';
 import { AcceptRideDto } from './dto/accept-ride.dto';
 import { RejectRideDto } from './dto/reject-ride.dto';
 import { CancelRideDto } from './dto/cancel-ride.dto';
+import { UpdateRideStatusDto } from './dto/ride-status-dto';
 
 import {
   RideType,
@@ -663,6 +664,93 @@ export class RideService {
     try {
     } catch (error) {
       console.log(`error while driver arrived`, error);
+      return new ApiResponse(500, {}, Msg.SERVER_ERROR);
+    }
+  }
+
+  async updateRideStatus(userId: string, dto: UpdateRideStatusDto) {
+    try {
+      const driver = await this.driverModel.findOne({ user: userId });
+
+      if (!driver) {
+        return new ApiResponse(404, {}, Msg.DRIVER_NOT_FOUND);
+      }
+
+      const ride = await this.rideModel.findById(dto.rideId);
+
+      if (!ride) {
+        return new ApiResponse(404, {}, Msg.RIDE_NOT_FOUND);
+      }
+
+      if (ride?.driver?.toString() !== driver._id.toString()) {
+        return new ApiResponse(400, {}, Msg.RIDE_NOT_ASSIGNED_TO_DRIVER);
+      }
+
+      let socketEvent = '';
+
+      switch (dto.status) {
+        case RideStatus.DRIVER_ARRIVIED:
+          if (ride.status !== RideStatus.DRIVER_FOUND) {
+            return new ApiResponse(
+              400,
+              {},
+              'Driver can only arrive after accepting the ride.',
+            );
+          }
+
+          socketEvent = 'driverArrived';
+          break;
+
+        case RideStatus.ONGOING:
+          if (ride.status !== RideStatus.DRIVER_ARRIVIED) {
+            return new ApiResponse(
+              400,
+              {},
+              'Ride can only start after driver arrives.',
+            );
+          }
+
+          socketEvent = 'rideStarted';
+          break;
+
+        case RideStatus.PAYMENT_PENDING:
+          if (ride.status !== RideStatus.ONGOING) {
+            return new ApiResponse(
+              400,
+              {},
+              'Ride must be ongoing before requesting payment.',
+            );
+          }
+
+          socketEvent = 'paymentPending';
+          break;
+
+        case RideStatus.COMPLETED:
+          if (ride.status !== RideStatus.PAYMENT_PENDING) {
+            return new ApiResponse(
+              400,
+              {},
+              'Ride completion is handled after successful payment.',
+            );
+          }
+
+          socketEvent = 'paymentCompleted';
+
+        default:
+          return new ApiResponse(400, {}, 'Invalid ride status.');
+      }
+
+      ride.status = dto.status;
+
+      await ride.save();
+
+      this.socketService.emitToUser(ride.user.toString(), socketEvent, {
+        rideId: ride._id,
+        status: ride.status,
+      });
+
+      return new ApiResponse(200, {}, Msg.RIDE_STATUS_UPDATED_SUCCESSFULLY);
+    } catch (error) {
       return new ApiResponse(500, {}, Msg.SERVER_ERROR);
     }
   }

@@ -136,4 +136,6 @@ export const Msg = {
   ACTIVE_RIDE_EXISTS: 'You already have an active ride',
   NO_ACTIVE_RIDES_FOUND: 'No active rides found',
   NO_RIDES_FOUND_NEARBY: 'No rides found nearby',
+  RIDE_STATUS_UPDATED_SUCCESSFULLY: 'Ride status updated successfully.',
+  RIDE_NOT_ASSIGNED_TO_DRIVER: 'Ride is not assigned to this driver.',
 };
