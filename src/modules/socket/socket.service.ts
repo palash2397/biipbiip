@@ -13,7 +13,7 @@ export class SocketService {
     return this.server;
   }
 
-  emitToUser(userId: string, event: string, data: any) {
+  emitToUser(userId: any, event: string, data: any) {
     if (!this.server) {
       console.log('Socket server not initialized');
       return;

@@ -265,7 +265,13 @@ export class RideService {
 
       const rideData = await this.rideModel
         .findById(ride._id)
-        .populate('driver')
+        .populate({
+          path: 'driver',
+          populate: {
+            path: 'user',
+            select: 'firstName lastName email avatar phoneNumber countryCode',
+          },
+        })
         .populate('rideType')
         .lean();
 
