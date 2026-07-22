@@ -13,6 +13,7 @@ import { DriverModule } from './modules/driver/driver.module';
 import { SocketModule } from './modules/socket/socket.module';
 import { RideModule } from './modules/ride/ride.module';
 import { AvailableCarsModule } from './modules/available-cars/available-cars.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AvailableCarsModule } from './modules/available-cars/available-cars.mod
     SocketModule,
     RideModule,
     AvailableCarsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [],
