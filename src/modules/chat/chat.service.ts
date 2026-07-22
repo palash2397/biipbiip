@@ -39,7 +39,7 @@ export class ChatService {
     try {
       const userId = client.data.user.id;
 
-      const ride = await this.rideModel.findById(dto.rideId);
+      const ride = await this.rideModel.findById(dto.rideId).populate('driver');
 
       if (!ride) {
         return new ApiResponse(404, {}, Msg.RIDE_NOT_FOUND);
@@ -50,8 +50,10 @@ export class ChatService {
       }
 
       const isPassenger = ride.user.toString() === userId;
-      const isDriver = ride.driver.toString() === userId;
+      const isDriver = ride.driver && (ride.driver as any).user.toString() === userId;
 
+      console.log(`isDriver --->`, isDriver);
+      console.log(`isPassenger --->`, isPassenger);
       if (!isPassenger && !isDriver) {
         return new ApiResponse(401, {}, Msg.UNAUTHORIZED);
       }
@@ -84,21 +86,21 @@ export class ChatService {
     try {
       const userId = client.data.user.id;
 
-      const ride = await this.rideModel.findById(dto.rideId);
+      const ride = await this.rideModel.findById(dto.rideId).populate('driver');
 
       if (!ride) {
         return new ApiResponse(404, {}, Msg.RIDE_NOT_FOUND);
       }
 
       const isPassenger = ride.user.toString() === userId;
-      const isDriver = ride.driver?.toString() === userId;
+      const isDriver = ride.driver && (ride.driver as any).user.toString() === userId;
 
       if (!isPassenger && !isDriver) {
         return new ApiResponse(401, {}, Msg.UNAUTHORIZED);
       }
 
       const receiverId = isPassenger
-        ? ride?.driver?.toString()
+        ? (ride.driver as any).user.toString()
         : ride.user.toString();
 
       const message = await this.chatMessageModel.create({
@@ -109,10 +111,20 @@ export class ChatService {
         messageType: dto.messageType,
       });
 
-      const chatMessage = await this.chatMessageModel
+      let chatMessage = (await this.chatMessageModel
         .findById(message._id)
-        .populate('sender', 'fullName profileImage')
-        .lean();
+        .populate('sender', 'firstName lastName avatar')
+        .lean()) as any;
+
+      if (chatMessage?.sender) {
+        const sender = chatMessage.sender as any;
+        if (sender.avatar && !sender.avatar.startsWith('http')) {
+          const baseUrl = process.env.BASE_URL;
+          sender.avatar = `${baseUrl}/api/v1/uploads/profile/${sender.avatar}`;
+        } else if (!sender.avatar) {
+          sender.avatar = process.env.DEFAULT_IMAGE;
+        }
+      }
 
       server.to(`ride:${ride._id}`).emit('newMessage', chatMessage);
 
