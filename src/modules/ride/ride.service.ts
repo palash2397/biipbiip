@@ -682,7 +682,14 @@ export class RideService {
         return new ApiResponse(404, {}, Msg.DRIVER_NOT_FOUND);
       }
 
-      const ride = await this.rideModel.findById(dto.rideId);
+      const ride = await this.rideModel
+        .findById(dto.rideId)
+        .populate({
+          path: 'rideType',
+          select:
+            'title baseFare perKmCharge perMinuteCharge minimumFare seats image',
+        })
+        .populate('user');
 
       if (!ride) {
         return new ApiResponse(404, {}, Msg.RIDE_NOT_FOUND);
@@ -752,10 +759,50 @@ export class RideService {
 
       await ride.save();
 
-      this.socketService.emitToUser(ride.user.toString(), socketEvent, {
-        rideId: ride._id,
-        status: ride.status,
-      });
+      if (dto.status === RideStatus.PAYMENT_PENDING) {
+        const rideType = ride.rideType as any;
+
+        const fare = {
+          baseFare: rideType?.baseFare,
+          distanceCharge: rideType?.perKmCharge * ride.distance,
+          timeCharge: rideType?.perMinuteCharge * ride.estimatedTime,
+          total: ride.estimatedFare,
+          currency: 'EUR',
+        };
+
+        const summary = {
+          rideId: ride._id,
+          status: ride.status,
+
+          pickupAddress: ride.pickupAddress,
+          destinationAddress: ride.destinationAddress,
+
+          distance: ride.distance,
+          duration: ride.estimatedTime,
+
+          fare,
+
+          rideType: {
+            title: rideType?.title,
+          },
+        };
+
+        this.socketService.emitToUser(
+          ride.user.toString(),
+          socketEvent,
+          summary,
+        );
+        this.socketService.emitToUser(
+          driver.user.toString(),
+          socketEvent,
+          summary,
+        );
+      } else {
+        this.socketService.emitToUser(ride.user.toString(), socketEvent, {
+          rideId: ride._id,
+          status: ride.status,
+        });
+      }
 
       return new ApiResponse(200, {}, Msg.RIDE_STATUS_UPDATED_SUCCESSFULLY);
     } catch (error) {
