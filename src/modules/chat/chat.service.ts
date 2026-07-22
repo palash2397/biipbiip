@@ -137,7 +137,12 @@ export class ChatService {
     }
   }
 
-  async getMessages(userId: string, rideId: string) {
+  async getMessages(
+    userId: string,
+    rideId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     try {
       const ride = await this.rideModel.findById(rideId).populate('driver');
 
@@ -153,15 +158,25 @@ export class ChatService {
         return new ApiResponse(401, {}, Msg.UNAUTHORIZED);
       }
 
+      const totalMessages = await this.chatMessageModel.countDocuments({
+        ride: rideId,
+      });
+      const totalPages = Math.ceil(totalMessages / limit);
+
       let messages = (await this.chatMessageModel
         .find({
           ride: rideId,
         })
         .populate('sender', 'firstName lastName avatar')
         .sort({
-          createdAt: 1,
+          createdAt: -1,
         })
+        .skip((page - 1) * limit)
+        .limit(limit)
         .lean()) as any[];
+
+      // Reverse messages so they display chronologically in the UI (oldest at top, newest at bottom)
+      messages = messages.reverse();
 
       const baseUrl = process.env.BASE_URL;
       messages = messages.map((msg) => {
@@ -175,7 +190,19 @@ export class ChatService {
         return msg;
       });
 
-      return new ApiResponse(200, messages, Msg.CHAT_FETCHED);
+      return new ApiResponse(
+        200,
+        {
+          messages,
+          pagination: {
+            totalMessages,
+            totalPages,
+            currentPage: Number(page),
+            limit: Number(limit),
+          },
+        },
+        Msg.CHAT_FETCHED,
+      );
     } catch (error) {
       console.log(error);
 
