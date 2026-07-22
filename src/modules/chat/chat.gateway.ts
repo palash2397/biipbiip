@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
 import { JoinChatDto } from './dto/join-chat.dto';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @WebSocketGateway({
   path: '/viamo/socket.io',
@@ -29,5 +30,13 @@ export class ChatGateway {
     @MessageBody() dto: JoinChatDto,
   ) {
     return this.chatService.joinRideChat(client, dto);
+  }
+
+  @SubscribeMessage('sendMessage')
+  async sendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() dto: SendMessageDto,
+  ) {
+    return this.chatService.sendMessage(client, dto, this.server);
   }
 }

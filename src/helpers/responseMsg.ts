@@ -155,4 +155,11 @@ export const Msg = {
   CHAT_NOT_AUTHORIZED: 'You are not authorized to join this chat',
   CHAT_ALREADY_JOINED: 'You are already a member of this chat',
   CHAT_IS_NOT_AVAILABLE: 'Chat is not available for this ride.',
+  CHAT_FETCHED: 'Chat fetched successfully',
+
+  //Message
+  MESSAGE_SENT: 'Message sent successfully',
+  MESSAGE_NOT_SENT: 'Message not sent',
+  MESSAGE_FETCHED: 'Message fetched successfully',
+  MESSAGE_NOT_FOUND: 'Message not found',
 };
