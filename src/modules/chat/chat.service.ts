@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import { Socket, Server } from 'socket.io';
 
 import { RideStatus } from 'src/common/enums/ride/ride-enum';
-
 import { Ride, RideDocument } from 'src/modules/ride/schema/ride.schema';
+
 import {
   Driver,
   DriverDocument,
@@ -86,7 +86,6 @@ export class ChatService {
   async sendMessage(client: Socket, dto: SendMessageDto, server: Server) {
     try {
       const userId = client.data.user.id;
-
       const ride = await this.rideModel.findById(dto.rideId).populate('driver');
 
       if (!ride) {
