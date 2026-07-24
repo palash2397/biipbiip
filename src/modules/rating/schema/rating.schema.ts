@@ -52,3 +52,12 @@ export class Rating {
 }
 
 export const RatingSchema = SchemaFactory.createForClass(Rating);
+RatingSchema.index(
+  {
+    ride: 1,
+    givenBy: 1,
+  },
+  {
+    unique: true,
+  },
+);
