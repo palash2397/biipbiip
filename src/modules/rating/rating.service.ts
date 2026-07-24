@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { Rating, RatingDocument } from './schema/rating.schema';
 import { Ride, RideDocument } from '../ride/schema/ride.schema';
 import { User, UserDocument } from '../user/schema/user.schema';
+import { Driver, DriverDocument } from '../driver/schema/driver.schema';
 
 import { UserRole } from 'src/common/enums/user/role.enum';
 import { RideStatus } from 'src/common/enums/ride/ride-enum';
@@ -26,6 +27,9 @@ export class RatingService {
 
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
+
+    @InjectModel(Driver.name)
+    private readonly driverModel: Model<DriverDocument>,
   ) {}
 
   async createRating(userId: string, dto: CreateRatingDto) {
@@ -88,9 +92,16 @@ export class RatingService {
 
   async myReviews(userId: string) {
     try {
+      const driver = await this.driverModel.findOne({ user: userId });
+      const givenToIds = [userId];
+      
+      if (driver) {
+        givenToIds.push(driver._id.toString());
+      }
+
       let reviews = await this.ratingModel
         .find({
-          givenTo: userId,
+          givenTo: { $in: givenToIds },
         })
         .populate('givenBy', 'firstName lastName avatar')
         .populate('ride', 'createdAt')
