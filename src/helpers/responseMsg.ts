@@ -126,6 +126,7 @@ export const Msg = {
   RIDE_FETCHED: 'Ride fetched successfully',
   RIDES_FETCHED: 'Rides fetched successfully',
   RIDES_NOT_FOUND: 'No Rides Found',
+  RIDE_NOT_COMPLETED: 'Ride not completed',
   RIDE_UPDATED: 'Ride updated successfully',
   RIDE_DELETED: 'Ride deleted successfully',
   RIDE_ALREADY_ACCEPTED: 'Ride already accepted',
@@ -162,4 +163,11 @@ export const Msg = {
   MESSAGE_NOT_SENT: 'Message not sent',
   MESSAGE_FETCHED: 'Message fetched successfully',
   MESSAGE_NOT_FOUND: 'Message not found',
+
+  //Rating
+  RATING_SUBMITTED: 'Rating submitted successfully',
+  RATING_NOT_SUBMITTED: 'Rating not submitted',
+  RATING_ALREADY_SUBMITTED: 'Rating already submitted',
+  RATING_FETCHED: 'Rating fetched successfully',
+  RATING_NOT_FOUND: 'Rating not found',
 };
