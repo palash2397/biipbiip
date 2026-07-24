@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { RatingService } from './rating.service';
 
 import { ApiBearerAuth, ApiTags, ApiConsumes } from '@nestjs/swagger';
@@ -22,5 +22,12 @@ export class RatingController {
   @UseGuards(RoleGuard)
   submitRating(@Req() req: any, @Body() dto: CreateRatingDto) {
     return this.ratingService.createRating(req.user.id, dto);
+  }
+
+  @Get('/my')
+  @Roles(UserRole.USER, UserRole.DRIVER, UserRole.PASSENGER)
+  @UseGuards(RoleGuard)
+  myReviews(@Req() req: any) {
+    return this.ratingService.myReviews(req.user.id);
   }
 }
